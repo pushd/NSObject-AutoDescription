@@ -43,32 +43,10 @@
 			const char *property_name = property_getName(propertyList[i]);
 			NSString *propertyName = [NSString stringWithCString:property_name encoding:NSASCIIStringEncoding];
 
-            if (propertyName) {
-                NSString *attributes = [NSString stringWithCString:property_getAttributes(propertyList[i]) encoding:NSASCIIStringEncoding];
-                BOOL safeToGetValue = YES;
-                NSArray<NSString *> * attributeList = [an componentsSeparatedByString:@","];
-                
-                for (NSString* att in atts) {
-                    if(att.length >1 && [att hasPrefix:@"G"]) {
-                        if ([atts containsObject:@"R"]) {
-                            safeToGetValue = NO;
-                        } else {
-                            for (NSString* att2 in atts) {
-                                if(att.length >1 && [att hasPrefix:@"S"]) {
-                                    safeToGetValue = NO;
-                                    break;
-                                }
-                            }
-                        }
-                        break;
-                    }
-                }
-                
-                if (safeToGetValue) {
-                    id propertyValue = [self valueForKey:propertyName];
-                    [result appendFormat:@"%@ = %@; ", propertyName, [propertyValue cleanDescription]];
-                }
-            }
+			if (propertyName) {
+				id propertyValue = [self valueForKey:propertyName];
+				[result appendFormat:@"%@ = %@; ", propertyName, [propertyValue cleanDescription]];
+			}
 		}
 		free(propertyList);
 		currentClass = class_getSuperclass(currentClass);
@@ -78,7 +56,7 @@
 		[result deleteCharactersInRange:NSMakeRange(length - 1, 1)];
 	}
 
-	objc_setAssociatedObject(self, currentQueue, nil, OBJC_ASSOCIATION_RETAIN);
+	objc_setAssociatedObject(self, (__bridge const void *)(currentQueue), nil, OBJC_ASSOCIATION_RETAIN);
 
 	return result;
 }
